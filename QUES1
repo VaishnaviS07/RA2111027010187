@@ -1,0 +1,75 @@
+import React, { useState } from 'react';
+
+function App() {
+  const [selectedCompany, setSelectedCompany] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const companies = ['Amazon', 'Flipkart', 'Snapdeal', 'Myntra', 'Ajio'];
+  const categories = ['Category1', 'Category2', 'Category3', 'Category4', 'Category5', 'Category6', 'Category7', 'Category8', 'Category9', 'Category10'];
+
+  const handleCompanyChange = (event) => {
+    setSelectedCompany(event.target.value);
+  };
+
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(http://20.244.56.144/test/companies/${selectedCompany}/categories/${selectedCategory}/products?top=10);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setProducts(data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  return (
+    <div className="App">
+      <h1>Top 10 Products</h1>
+      <div>
+        <label htmlFor="company">Select Company:</label>
+        <select id="company" value={selectedCompany} onChange={handleCompanyChange}>
+          <option value="">Select Company</option>
+          {companies.map((company, index) => (
+            <option key={index} value={company}>{company}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label htmlFor="category">Select Category:</label>
+        <select id="category" value={selectedCategory} onChange={handleCategoryChange}>
+          <option value="">Select Category</option>
+          {categories.map((category, index) => (
+            <option key={index} value={category}>{category}</option>
+          ))}
+        </select>
+      </div>
+      <button onClick={handleSubmit} disabled={!selectedCompany || !selectedCategory || loading}>
+        {loading ? 'Loading...' : 'Submit'}
+      </button>
+      <br />
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <ul>
+          {products.map((product, index) => (
+            <li key={index}>
+              <strong>{product.name}</strong>: ${product.price}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+export default App;
